@@ -163,4 +163,25 @@ class PruebaController extends Controller
         }
         return ExitCode::OK;
     }
+
+    // creamos consulta que obtiene todos los libros con el nombre del autor y el género
+    public function actionAllBooks()
+    {
+        $books = Book::find()
+            ->select(['books.title', 'books.cover_image', 'books.description', 'authors.author_name', 'genres.genre_name'])
+            ->join('INNER JOIN', 'authors', 'authors.author_id = books.author_id')
+            ->join('INNER JOIN', 'genres', 'genres.genre_id = books.genre_id')
+            ->asArray()
+            ->all();
+        foreach ($books as $book) {
+            printf(
+                "(%s) -> El libro es %s, el autor es %s y el género es %s\n",
+                $book['title'],
+                $book['title'],
+                $book['author_name'],
+                $book['genre_name']
+            );
+        }
+        return ExitCode::OK;
+    }
 }

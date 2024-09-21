@@ -8,24 +8,7 @@ DROP DATABASE IF EXISTS TheBookClubDB;
 
 USE TheBookClubDB;
 
--- private static $users = [
---     '100' => [
---         'id' => '100',
---         'username' => 'admin',
---         'password' => 'admin',
---         'authKey' => 'test100key',
---         'accessToken' => '100-token',
---     ],
---     '101' => [
---         'id' => '101',
---         'username' => 'demo',
---         'password' => 'demo',
---         'authKey' => 'test101key',
---         'accessToken' => '101-token',
---     ],
--- ];
-
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS user (
     user_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -34,16 +17,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
-
-CREATE TABLE IF NOT EXISTS books (
-    book_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    author VARCHAR(100) NOT NULL
-) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
-
-DROP TABLE IF EXISTS books;
-
-SELECT * FROM books;
 
 CREATE TABLE IF NOT EXISTS books (
     book_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -58,49 +31,16 @@ CREATE TABLE IF NOT EXISTS books (
     FOREIGN KEY (genre_id) REFERENCES genres (genre_id)
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
 
--- Desactivar restricciones de claves foráneas
-SET FOREIGN_KEY_CHECKS = 0;
-
--- Truncar la tabla
-TRUNCATE TABLE books;
-
-TRUNCATE TABLE authors;
-
--- Activar restricciones de claves foráneas
-SET FOREIGN_KEY_CHECKS = 1;
-
 CREATE TABLE IF NOT EXISTS authors (
     author_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     author_name VARCHAR(100) NOT NULL,
     nationality VARCHAR(100) NOT NULL
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
 
-SELECT * FROM authors WHERE author_id = 45;
-
--- insert one author demo
-INSERT INTO
-    authors (author_name, nationality)
-VALUES (
-        'Demo Author',
-        'Demo National'
-    );
-
-SELECT * FROM books;
-
--- INNER JOIN para obtener el nombre del autor y libro
-SELECT books.title, authors.author_name
-FROM books
-    INNER JOIN authors ON books.author_id = authors.author_id
-WHERE
-    authors.author_id = 9;
-
 CREATE TABLE IF NOT EXISTS genres (
     genre_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     genre_name VARCHAR(100) NOT NULL
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
-
--- insert one genre demo
-INSERT INTO genres (genre_name) VALUES ('Demo Genre');
 
 CREATE TABLE IF NOT EXISTS clubs (
     club_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -119,7 +59,7 @@ CREATE TABLE IF NOT EXISTS club_members (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (club_id) REFERENCES clubs (club_id),
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (user_id) REFERENCES user (user_id),
     UNIQUE KEY non_duplicate_user (club_id, user_id)
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
 
@@ -130,7 +70,7 @@ CREATE TABLE IF NOT EXISTS user_books (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (book_id) REFERENCES books (book_id),
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (user_id) REFERENCES user (user_id),
     UNIQUE KEY non_duplicate_user_book (book_id, user_id)
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
 
@@ -144,6 +84,45 @@ CREATE TABLE IF NOT EXISTS borrowed_books (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (book_id) REFERENCES books (book_id),
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (user_id) REFERENCES user (user_id),
     UNIQUE KEY non_duplicate_user_book (book_id, user_id)
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
+
+SELECT * FROM books;
+
+-- Desactivar restricciones de claves foráneas
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Truncar la tabla
+TRUNCATE TABLE books;
+
+TRUNCATE TABLE authors;
+
+-- Activar restricciones de claves foráneas
+SET FOREIGN_KEY_CHECKS = 1;
+
+SELECT * FROM authors WHERE author_id = 45;
+
+-- insert one author demo
+INSERT INTO
+    authors (author_name, nationality)
+VALUES (
+        'Demo Author',
+        'Demo National'
+    );
+
+SELECT * FROM books LIMIT 1000;
+
+-- INNER JOIN para obtener el nombre del autor y libro
+SELECT books.title, authors.author_name
+FROM books
+    INNER JOIN authors ON books.author_id = authors.author_id
+WHERE
+    authors.author_id = 9;
+
+-- insert one genre demo
+INSERT INTO genres (genre_name) VALUES ('Demo Genre');
+
+DESCRIBE books;
+
+SELECT * FROM books;

@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -69,6 +70,31 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        return Yii::$app->security->validatePassword($password, $this->password);
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Nombre de usuario',
+            'password' => 'Contraseña',
+        ];
+    }
+
+    public function attributeHints()
+    {
+        return [
+            'username' => 'Introduce tu nombre de usuario',
+            'password' => 'Introduce tu contraseña',
+        ];
+    }
+
+    public function rules()
+    {
+        return [
+            [['username', 'password'], 'required'],
+            ['username', 'string', 'max' => 255],
+            ['password', 'string', 'min' => 6],
+        ];
     }
 }

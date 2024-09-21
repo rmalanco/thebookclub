@@ -61,7 +61,9 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $smarty = new \Smarty();
+        $smarty->registerClass('View', 'yii\web\View');
+        return $this->render('index.tpl');
     }
 
     /**
