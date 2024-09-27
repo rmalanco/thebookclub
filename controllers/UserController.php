@@ -88,6 +88,16 @@ class UserController extends Controller
         return $this->render('create', ['user' => $user]);
     }
 
+    public function actionDetails($id)
+    {
+        $user = User::find()->where(['user_id' => $id])->one();
+        if (empty($user)) {
+            Yii::$app->session->setFlash('error', self::USUARIO_NO_ENCONTRADO);
+            return $this->goHome();
+        }
+        return $this->render('details', ['user' => $user]);
+    }
+
     protected function isUsernameTaken($username)
     {
         return User::findOne(['username' => $username]) !== null;

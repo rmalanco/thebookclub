@@ -22,6 +22,21 @@ class Author extends ActiveRecord
         return $this->hasMany(Book::class, ['author_id' => 'author_id']);
     }
 
+    public static function getAllAuthors()
+    {
+        return Author::find()->orderBy('author_name')->all();
+    }
+
+    public static function getAuthorsList()
+    {
+        $authors = Author::find()->orderBy('author_name')->all();
+        $list = [];
+        foreach ($authors as $author) {
+            $list[$author->author_id] = $author->author_name;
+        }
+        return $list;
+    }
+
     public function getAuthorName($id)
     {
         // hasOne() is used to define a one-to-one relationship
