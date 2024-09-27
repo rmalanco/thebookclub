@@ -13,8 +13,16 @@ return [
     'class' => 'yii\db\Connection',
     'dsn' => 'mysql:host=' . $_ENV['DB_LOCALHOST'] . ';dbname=' . $_ENV['DB_NAME'],
     'username' => $_ENV['DB_USERNAME'],
-    'password' => $_ENV['DB_PASSWORD'],
+    'password' => '',
     'charset' => $_ENV['DB_CHARSET'],
+
+    // .env
+    // ### DEVELOPMENT ###
+    // DB_LOCALHOST=localhost
+    // DB_NAME=TheBookClubDB
+    // DB_USERNAME=root
+    // DB_PASSWORD=
+    // DB_CHARSET=utf8
 
 
     // Schema cache options (for production environment)
