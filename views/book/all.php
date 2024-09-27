@@ -29,6 +29,13 @@ $this->title = 'Lista de libros';
                 <tbody>
                     <?php foreach ($books as $book) : ?>
                     <tr>
+                        <td>
+                            <?php if (!empty($book->cover_image)) : ?>
+                            <?= Html::img('@web/uploads/' . $book->cover_image, ['alt' => $book->title, 'class' => 'img-thumbnail', 'style' => 'width: 100px; height: 100px;']) ?>
+                            <?php else : ?>
+                            <?= Html::img('@web/uploads/no-image.png', ['alt' => $book->title, 'class' => 'img-thumbnail', 'style' => 'width: 100px; height: 100px;']) ?>
+                            <?php endif; ?>
+                        </td>
                         <td><?= $book->title ?></td>
                         <td><?= substr($book->description, 0, 25) . '...' ?></td>
                         <td><?= $book->author_name ?></td>

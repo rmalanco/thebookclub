@@ -9,6 +9,8 @@ class Book extends ActiveRecord
 {
     public $author_name;
     public $genre_name;
+    public $user_id;
+    public $username;
 
     public static function tableName()
     {
@@ -46,6 +48,11 @@ class Book extends ActiveRecord
         return $this->genre_name;
     }
 
+    public static function existeLibro($title)
+    {
+        return Book::find()->where(['title' => $title])->one();
+    }
+
     public function toString()
     {
         return sprintf(
@@ -64,9 +71,10 @@ class Book extends ActiveRecord
     public static function getAllBooks()
     {
         return self::find()
-            ->select(['books.title', 'books.cover_image', 'books.description', 'authors.author_name', 'genres.genre_name'])
+            ->select(['books.book_id', 'books.title', 'books.cover_image', 'books.description', 'authors.author_name', 'genres.genre_name'])
             ->join('INNER JOIN', 'authors', 'authors.author_id = books.author_id')
             ->join('INNER JOIN', 'genres', 'genres.genre_id = books.genre_id')
+            ->orderBy('books.title')
             ->all();
     }
 

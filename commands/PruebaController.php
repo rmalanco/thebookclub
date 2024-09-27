@@ -184,4 +184,32 @@ class PruebaController extends Controller
         }
         return ExitCode::OK;
     }
+
+    public function actionSaberQuienTieneElLibro($id)
+    {
+        //         SELECT books.title, user.username
+        // FROM books
+        //     INNER JOIN user_books ON books.book_id = user_books.book_id
+        //     INNER JOIN user ON user_books.user_id = user.user_id
+        // WHERE
+        //     user_books.book_id = 16;
+
+        $query = Book::find()
+            ->select(['books.title', 'user.username'])
+            ->join('INNER JOIN', 'user_books', 'books.book_id = user_books.book_id')
+            ->join('INNER JOIN', 'user', 'user_books.user_id = user.user_id')
+            ->where(['user_books.book_id' => $id])
+            ->asArray()
+            ->all();
+
+        foreach ($query as $row) {
+            printf(
+                "El libro %s lo tiene el usuario %s\n",
+                $row['title'],
+                $row['username']
+            );
+        }
+
+        return ExitCode::OK;
+    }
 }

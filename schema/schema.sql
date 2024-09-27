@@ -88,6 +88,18 @@ CREATE TABLE IF NOT EXISTS borrowed_books (
     UNIQUE KEY non_duplicate_user_book (book_id, user_id)
 ) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
 
+CREATE TABLE IF NOT EXISTS book_scores (
+    book_score_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    book_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    score TINYINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books (book_id),
+    FOREIGN KEY (user_id) REFERENCES user (user_id),
+    UNIQUE KEY non_duplicate_user_book (book_id, user_id)
+) ENGINE = INNODB DEFAULT CHARSET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
+
 SELECT * FROM books;
 
 -- Desactivar restricciones de claves foráneas
@@ -126,3 +138,11 @@ INSERT INTO genres (genre_name) VALUES ('Demo Genre');
 DESCRIBE books;
 
 SELECT * FROM books;
+
+-- inner join para obtener que usuario tiene un libro
+SELECT books.title, user.username
+FROM books
+    INNER JOIN user_books ON books.book_id = user_books.book_id
+    INNER JOIN user ON user_books.user_id = user.user_id
+WHERE
+    user_books.book_id = 16;
