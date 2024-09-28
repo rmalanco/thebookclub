@@ -5,14 +5,19 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use app\models\User;
+use app\models\UserBooks;
 
 class UserController extends Controller
 {
     private const USUARIO_NO_ENCONTRADO = 'No existe el usuario';
+    private const LOGIN_URL = 'site/login';
 
     // url: http://localhost:8080/user/index
     public function actionIndex()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
         $users = User::find()->all();
         return $this->render('index', ['users' => $users]);
     }
@@ -20,6 +25,9 @@ class UserController extends Controller
     // url: http://localhost:8080/user/view/1
     public function actionView($id)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
         $user = User::find()->where(['user_id' => $id])->one();
         if (empty($user)) {
             Yii::$app->session->setFlash('error', self::USUARIO_NO_ENCONTRADO);
@@ -31,6 +39,9 @@ class UserController extends Controller
     // url: http://localhost:8080/user/update/1
     public function actionUpdate($id)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
         $user = User::find()->where(['user_id' => $id])->one();
         $user->password = '';
 
@@ -58,6 +69,9 @@ class UserController extends Controller
     // url: http://localhost:8080/user/delete/1
     public function actionDelete($id)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
         $user = User::find()->where(['user_id' => $id])->one();
         if (empty($user)) {
             Yii::$app->session->setFlash('error', self::USUARIO_NO_ENCONTRADO);
@@ -70,6 +84,9 @@ class UserController extends Controller
 
     public function actionCreate()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
         $user = new User();
 
         if ($user->load(Yii::$app->request->post()) && $user->validate()) {
@@ -90,6 +107,9 @@ class UserController extends Controller
 
     public function actionDetails($id)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
         $user = User::find()->where(['user_id' => $id])->one();
         if (empty($user)) {
             Yii::$app->session->setFlash('error', self::USUARIO_NO_ENCONTRADO);
@@ -105,6 +125,10 @@ class UserController extends Controller
 
     protected function createUser($user)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
+
         $transaction = Yii::$app->db->beginTransaction();
         try {
             // Hash de la contraseña y generación de claves

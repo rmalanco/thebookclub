@@ -110,6 +110,8 @@ TRUNCATE TABLE books;
 
 TRUNCATE TABLE authors;
 
+TRUNCATE TABLE book_scores;
+
 -- Activar restricciones de claves foráneas
 SET FOREIGN_KEY_CHECKS = 1;
 

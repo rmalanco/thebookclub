@@ -99,4 +99,9 @@ class Book extends ActiveRecord
             'cover_image' => 'Imagen de portada',
         ];
     }
+
+    public function getScores()
+    {
+        return $this->hasMany(BookScores::class, ['book_id' => 'book_id']);
+    }
 }

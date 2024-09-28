@@ -61,6 +61,7 @@ $config = [
         ],
     ],
     'params' => $params,
+    'name' => 'Book Manager',
 ];
 
 if (YII_ENV_DEV) {

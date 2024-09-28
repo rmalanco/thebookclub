@@ -6,6 +6,7 @@ use yii\db\ActiveRecord;
 
 class BookScores extends ActiveRecord
 {
+
     public static function tableName()
     {
         return 'book_scores';
@@ -55,18 +56,29 @@ class BookScores extends ActiveRecord
 
     public static function addScore($idLibro, $idUser, $score)
     {
-        $userBook = BookScores::find()
-            ->where(['book_id' => $idLibro, 'user_id' => $idUser])
-            ->one();
-
-        if ($userBook) {
-            return false;
-        }
-
         $bookScore = new BookScores();
         $bookScore->book_id = $idLibro;
         $bookScore->user_id = $idUser;
         $bookScore->score = $score;
-        $bookScore->save();
+        if ($bookScore->validate()) {
+            $bookScore->save();
+            return true;
+        }
+        return false;
+    }
+
+    public function rules()
+    {
+        return [
+            ['score', 'integer', 'min' => 1, 'max' => 5],
+            ['book_id', 'required'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'score' => 'Puntuación',
+        ];
     }
 }

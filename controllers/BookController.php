@@ -40,11 +40,13 @@ class BookController extends Controller
         $book = Book::find()->where(['book_id' => $id])->one();
         $userBooks = UserBooks::getLibroLoTiene($id);
         $averageScore = BookScores::getBookScores($id);
+        $bookScores = new BookScores();
+        $scores = BookScores::find()->where(['book_id' => $id])->all();
         if (empty($book)) {
             Yii::$app->session->setFlash('error', 'No existe el libro');
             return $this->goHome();
         }
-        return $this->render('view', ['book' => $book, 'userBooks' => $userBooks, 'averageScore' => $averageScore]);
+        return $this->render('view', ['book' => $book, 'userBooks' => $userBooks, 'averageScore' => $averageScore, 'bookScores' => $bookScores, 'scores' => $scores]);
     }
 
     public function actionCreate()
@@ -174,9 +176,45 @@ class BookController extends Controller
         return $this->redirect(['view', 'id' => $id]);
     }
 
-    public function actionAddScore($id)
+    public function actionRemoveFromLibrary($id)
     {
-        // mostrar que recibo por post
-        var_dump(Yii::$app->request->post());
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
+        $userBook = UserBooks::find()->where(['user_id' => Yii::$app->user->id, 'book_id' => $id])->one();
+
+        if (empty($userBook)) {
+            Yii::$app->session->setFlash('success', 'Libro eliminado de tu biblioteca');
+        } else {
+            Yii::$app->session->setFlash('error', 'El libro no estaba en tu biblioteca');
+        }
+
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    // Method Post: http://localhost:8080/book/score
+    public function actionScore()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect([self::LOGIN_URL]);
+        }
+        $bookScores = new BookScores();
+        if ($bookScores->load(Yii::$app->request->post()) && $bookScores->validate()) {
+            $userScore = BookScores::find()->where(['book_id' => $bookScores->book_id, 'user_id' => Yii::$app->user->id])->one();
+            if (!empty($userScore)) {
+                Yii::$app->session->setFlash('error', 'Ya has puntuado este libro');
+                return $this->redirect(['view', 'id' => $bookScores->book_id]);
+            }
+
+            if (BookScores::addScore($bookScores->book_id, Yii::$app->user->id, $bookScores->score)) {
+                Yii::$app->session->setFlash('success', 'Puntuación añadida correctamente');
+            } else {
+                Yii::$app->session->setFlash('error', 'Error al añadir la puntuación');
+            }
+        } else {
+            Yii::$app->session->setFlash('error', 'Error al añadir la puntuación');
+        }
+
+        return $this->redirect(['view', 'id' => $bookScores->book_id]);
     }
 }

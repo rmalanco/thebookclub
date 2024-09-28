@@ -57,4 +57,41 @@ class Author extends ActiveRecord
             $this->getBooks()->count()
         );
     }
+
+
+    public static function getAverageScore($id)
+    {
+        $books = Author::find()->where(['author_id' => $id])->one()->getBooks()->all();
+        $total = 0;
+        $count = 0;
+        foreach ($books as $book) {
+            $scores = $book->getScores()->all();
+            foreach ($scores as $score) {
+                $total += $score->getScore();
+                $count++;
+            }
+        }
+        return $count > 0 ? $total / $count : 0;
+    }
+
+    public static function getAuthorScores($id)
+    {
+        $books = Author::find()->where(['author_id' => $id])->one()->getBooks()->all();
+        $count = 0;
+        foreach ($books as $book) {
+            $scores = $book->getScores()->all();
+            $count += count($scores);
+        }
+        return $count;
+    }
+
+    public static function getAveragesScores()
+    {
+        $authors = Author::find()->all();
+        $list = [];
+        foreach ($authors as $author) {
+            $list[$author->author_id] = Author::getAverageScore($author->author_id);
+        }
+        return $list;
+    }
 }

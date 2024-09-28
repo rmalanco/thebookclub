@@ -97,4 +97,38 @@ class User extends ActiveRecord implements IdentityInterface
             ['password', 'string', 'min' => 6],
         ];
     }
+
+    public function hasBook($book_id)
+    {
+        $userBooks = UserBooks::find()->where([
+            'user_id' => Yii::$app->user->id,
+            'book_id' => $book_id
+        ])->one();
+
+        return !empty($userBooks);
+    }
+
+    public function removeBook($book_id)
+    {
+        $userBooks = UserBooks::find()->where([
+            'user_id' => Yii::$app->user->id,
+            'book_id' => $book_id
+        ])->one();
+
+        if (!empty($userBooks)) {
+            return $userBooks->delete();
+        }
+
+        return false;
+    }
+
+    public function getVotes()
+    {
+        return $this->hasMany(BookScores::class, ['user_id' => 'user_id']);
+    }
+
+    public function getVotesCount()
+    {
+        return count($this->votes);
+    }
 }
